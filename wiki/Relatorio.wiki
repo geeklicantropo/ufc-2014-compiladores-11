@@ -92,7 +92,7 @@ A estrutura de tabala do símbolo foi feita utilizando relacionamentos entre cla
  Nessa classe procuramos representar uma tabela com as classes do programa e  suas respectivas TableForClass correspondentes. Os pares chaves/valor do hashmap são as classes(chave), que são objetos Symbol e as devidas tabelas(valor) correspondentes, que são objetos do tipo TableForClass. As classes são adicionadas na symboltable através do método addClass.  Temos também um HashMap para registrar a classe filha(symbol) e seu determinado pai(symbol).
  
 
-==Herança no MiniJava
+==Herança no MiniJava==
 
 A linguagem MiniJava permite que se ultilize herança. Dessa forma, tivemos de se preocupar para que ao ser detectado um caso de uma classe herdar de outra, a classe base pudesse receber os atributos e métodos da super-classe. A estrutura usada para representar a herança foi um HashMap de Symbol(chave da classe base) para Symbol(valor da super-classe) que fica na classe TableOfSymbol. Na parte do visit em ClassDeclExtends, temos o processamento da herança. A herança é adicionada na estrutura de dados e é feita a configuração de métodos e variáveis na função de setUpTheInheritance. 
 Checagem de Tipos
@@ -101,10 +101,10 @@ O padrão Visitor é um padrão de projeto no contexto de orientação a objeto 
 
 Na classe SymbolTableVisitor que implementa a classe TypeVisitor, onde aquela tem como objetivo fazer o analise de cada uma das classes da árvore sintática. Foi acrescentada também a classe ErrorMsg. Nessa classe teremos um booleano que indica se houve algum erro na checagem de tipos. A etapa onde é feita a checagem de tipos ultiliza bastante a classe TableOfSymbol, pois esta armazena estruturadamente as declarações de variáveis e o escopo das mesmas. 
 
-==Testes
+==Testes==
 
 No pacote tests temos a classe Test onde é realizada as operações implementadas sobre os arquivos java disponíveis na pasta sampleMiniJavaPrograms. 
 
-==Conclusão & Considerações
+==Conclusão & Considerações==
 
 A equipe formada por apenas dois membros encontrou uma serie de dificuldades com a tecnologia utilizada bem como a complexidade do projeto. Porém, a equipe pode absorver a fundamentação teorica durante a disciplina e isso ajudou a iniciar e continuar o desenvolvimento do projeto. Pudemos nesse projeto, usar conhecimentos adquiridos em outras disciplinas como engenharia de software, porém não pudemos fazer uso de ferramentas devido as limitações de tempo e de pessoal. 
