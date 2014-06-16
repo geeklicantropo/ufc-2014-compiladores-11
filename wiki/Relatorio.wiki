@@ -14,7 +14,7 @@ Uma gramática é dita recursiva à esquerda se ela tiver um não-terminal A tal
  A => A& para alguma cadeia w.
 
  A nossa gramática MiniJava possuía recursão a esquerda, que não é aceita pelo JavaCC. Na gramática original havia uma recursividade à esquerda no não-terminal "Exp", que representa a expressão. Para contornar, tivemos que efetuar uma alteração na gramática, como segue abaixo:
-
+{{{
 Gramática original com recursão à esquerda:
 Exp → Exp op Exp
 → Exp . length
@@ -45,6 +45,7 @@ Exp→ INTEGER LITERAL ExpL
 → ! Exp ExpL
 → ( Exp ) ExpL
 
+}}}
 
 Em algumas produções haviam conflitos, o conflito foi devido a necessidade do uso de lookaheads de determinados tamanhos, dependendo da produção. Nessa parte da construção, tivemos algumas dificuldade. No início declaramos um lookahead específico no options, e na frente de cada produção, colocamos o lookahead que era pra ser utilizado. Mas mesmo assim, estava aparecendo o aviso de erro para as produções que tinham conflito. Então setamos o lookahead no próprio Parser.jj,  nas produções que possuíam conflito, e todos os warnings foram eliminados corretamente.
 
