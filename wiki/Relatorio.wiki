@@ -1,9 +1,9 @@
 	 	 	 	
->>> Apresentação Inicial
+=Apresentação Inicial=
 
-Esse relatório descreve as duas primeiras partes inicias de todo o processo de um compilador para a linguagem MiniJava. Nesse relatório, procuramos relatar o que conseguimos fazer durante todo o processo de aprendizado nessa disciplina (levamos em consideração as dificuldades encontradas que eu hei de relatar posteriormente) através da descrição da implementadão do trabalho, em termos de estrutura organizacional do projeto, dificuldades encontradas,...
+Esse relatório descreve as duas primeiras partes inicias de todo o processo de um compilador para a linguagem MiniJava. Nesse relatório, procuramos relatar o que conseguimos fazer durante todo o processo de aprendizado nessa disciplina (levamos em consideração as dificuldades encontradas que eu hei de relatar posteriormente) através da descrição da implementadão do trabalho, em termos de estrutura organizacional do projeto, dificuldades encontradas, etc.
  
->>> Análise Léxica e Análise Sintática
+=Análise Léxica e Análise Sintática=
 
 A fase inicial do compilador é a fase que faz a Análise léxica e sintática. Nessa fase inicial, o compilador verifica se o programa contém algum erro léxico “tipo, o uso de uma palavra que não foi identificado como token na gramática” e também algum erro sintático “tipo, partes do programa que não conseguem ser geradas a partir da gramatica definida, no nosso caso em particular, a gramática da linguagem MiniJava. ”
 
