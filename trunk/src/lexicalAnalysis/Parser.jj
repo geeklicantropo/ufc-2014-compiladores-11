@@ -1,0 +1,351 @@
+/**
+
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+options
+{
+  JDK_VERSION = "1.5";
+  static = true;
+}
+
+PARSER_BEGIN(Parser)
+package lexicalAnalysis;
+
+import syntaxtree.*;
+import java.util.ArrayList;
+
+public class Parser {}
+
+PARSER_END(Parser)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
+/*Tokens especiais*/
+SPECIAL_TOKEN :
+{
+<SINGLE_LINE_COMMENT: "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+}
+
+/*Palavras Reservadas*/
+TOKEN :
+{
+  < IF : "if" >
+| < ELSE : "else" >
+| < WHILE : "while" >
+| < INT : "int" >
+| < LENGTH : "length" >
+| < STRING : "String" >
+| < MAIN : "main" >
+| < STATIC : "static" >
+| < PUBLIC : "public" >
+| < VOID : "void" >
+| < TRUE : "true" >
+| < FALSE : "false" >
+| < NEW : "new" >
+| < THIS : "this" >
+| < RETURN : "return" >
+| < CLASS : "class" >
+| < EXTENDS : "extends" >
+| < BOOLEAN : "boolean" >
+| < SYSTEMOUTPRINTLN : "System.out.println" >
+}
+
+TOKEN :
+{
+  < COMMA : "," >
+| < DOT : "." >
+| < SEMICOLON : ";" >
+| < LPAREN : "(" >
+| < RPAREN : ")" >
+| < RBRACE : "}" >
+| < LBRACE : "{" >
+| < LBRACKET : "[" >
+| < RBRACKET : "]" >
+}
+
+/*Operadores*/
+TOKEN :
+{
+  < ASSIGN: "=" >
+| < NOT: "!" >
+| < PLUS: "+" >
+| < MINUS: "-" >
+| < MULTIPLY: "*" >
+| < DIVIDE: "/" >
+| < LT: "<" >
+| < AND: "&&" >
+}
+
+TOKEN :
+{
+  < INTEGER_LITERAL : (< DIGIT >)+ >
+| < DIGIT : [ "0"-"9" ] >
+| < ID : ([ "a" -"z" ] | ["_"] | [ "A" - "Z" ] | ["0"-"9"])+ >
+}
+
+/*A função Program() analisa a execusão das variaveis do tipo MainClass() e ClassDecl() nela */
+Program Program() :
+{
+  MainClass m; ClassDecl cd; ClassDeclList cdl = new ClassDeclList();
+}
+{  
+      m = MainClass() (cd = ClassDecl() { cdl.addElement(cd); } )* { return new Program(m,cdl); }
+}
+
+
+/* Nesssa função é analisado a declaração de uma variavel de um certo tipo */
+VarDecl VarDecl() :
+{
+  Type t; Token i;
+}
+{
+ t = Type() i = < ID > < SEMICOLON > { return new VarDecl(t,new Identifier(i.image)); }
+}
+
+/*Nessa função é analisado a construção de um método  */
+MethodDecl MethodDecl() :
+{
+  Type t; Token i; Formal f; VarDecl vd; Statement s; Exp e;
+  FormalList fl = new FormalList(); VarDeclList vl = new VarDeclList(); StatementList sl = new StatementList();
+}
+{
+  < PUBLIC > t = Type() i = < ID > < LPAREN > fl = FormalList() < RPAREN > < LBRACE >
+  ( LOOKAHEAD(2) vd = VarDecl() { vl.addElement(vd); } )* (s = Statement() { sl.addElement(s); })*< RETURN > e = Exp() < SEMICOLON > < RBRACE >
+  { return new MethodDecl(t,new Identifier(i.image),fl,vl,sl,e); }
+}
+
+/*Nessa função é analizado a classe main: os tokens ai1 ai2  é reconhecido
+por conjuntos de caracteres da calsse main, o Statement as também é reconhedo
+ pelo Statement difinido na propria função */
+MainClass MainClass() :
+{
+  Token ai1,ai2; Statement as;
+}
+{
+  < CLASS > ai1 = < ID > < LBRACE > < PUBLIC > < STATIC > < VOID > < MAIN > < LPAREN > < STRING > < LBRACKET >
+  < RBRACKET > ai2 = < ID > < RPAREN > < LBRACE > as = Statement() < RBRACE > < RBRACE >
+  { return new MainClass(new Identifier(ai1.image),new Identifier(ai2.image),as); }
+}
+
+/* Nesssa função é analisado a declaração de uma variavel */
+ClassDecl ClassDecl() :
+{
+  Token id; ClassDecl cd;
+}
+{
+  < CLASS > id = < ID > cd = ClassDeclII(new Identifier(id.image))
+  { return cd; }
+}
+
+/*Nessa função é analisado a construção de uma classe */
+ClassDecl ClassDeclII(Identifier i) :
+{
+  Token id; MethodDecl md; VarDecl vd = null; VarDeclList vdl = new VarDeclList(); MethodDeclList mdl = new MethodDeclList();
+}
+{
+  < LBRACE >
+  (vd = VarDecl() { vdl.addElement(vd); })* ( md = MethodDecl() { mdl.addElement(md); })*
+  < RBRACE >
+  { return new ClassDeclSimple(i, vdl, mdl); }
+| LOOKAHEAD(3)
+  < EXTENDS > id = < ID > < LBRACE >
+  (vd = VarDecl() { vdl.addElement(vd); })* ( md = MethodDecl() { mdl.addElement(md); })*
+  < RBRACE >
+  { return new ClassDeclExtends(i,new Identifier(id.image),vdl,mdl); }
+}
+
+
+/*Nessa função é analisado o tipo de uma variavel, se é inteiro ou boleano  */
+Type Type() :
+{
+  Token id; Type type;
+}
+{
+  LOOKAHEAD(2)
+  < INT > type = TypeII() { return type; }
+| < BOOLEAN > { return new BooleanType(); }
+| id = < ID >
+{ return new IdentifierType(id.image); }
+}
+
+/*Nessa função é analisado se o tipo de uma variavel, é inteiro ou uma lista de inteiros  */
+Type TypeII() :
+{}
+{ ( < LBRACKET > < RBRACKET > { return new IntArrayType(); } )? { return new IntegerType(); } }
+
+
+
+/* A função FormalRest() do tipo Formal é sempre o próximo parametro de uma funçao*/
+Formal FormalRest() :
+{
+  Type t; Token i;
+}
+{
+  < COMMA > t = Type() i = < ID > { return new Formal(t,new Identifier(i.image)); }
+}
+
+
+/*Na função Statemant é analizado as condição do tipo "if", "while",
+onde cada um é considerado um statement. Também as funções Block que
+garega uma lista de statement, função "print" que mostra na tela uma expressão,
+ uma identificador de Variavel "a" do tipo IdentifierAssign da função StatementII*/
+Statement Statement() :
+{
+  Statement s1; Statement s2; StatementList sl = new StatementList(); Exp e; Exp e2; Token i; Statement s; IdentifierAssign a;
+}
+{
+  < LBRACE > (s1 = Statement() { sl.addElement(s1); })* < RBRACE >
+  { return new Block(sl); }
+| < IF > < LPAREN > e = Exp() < RPAREN > s1 = Statement(){} < ELSE > s2 = Statement() { return new If(e,s1,s2); }
+| < WHILE > < LPAREN > e = Exp() < RPAREN > s1 = Statement() { return new While(e,s1); }
+| < SYSTEMOUTPRINTLN > < LPAREN > e = Exp() < RPAREN > < SEMICOLON > { return new Print(e); }
+| LOOKAHEAD(2)
+  i = < ID > a = StatementII(new Identifier(i.image)) { a.id = new Identifier(i.image); return a; }
+}
+
+/*A função StatementII é um IdentifierAssign que analisa a atribuição
+ de um expressão ou lista de expressão a uma variavel*/
+IdentifierAssign StatementII (Identifier i) :
+{
+  Exp exp,exp2;
+}
+{
+  LOOKAHEAD(2)
+  < ASSIGN > exp = Exp() < SEMICOLON > { return new Assign(i, exp); }
+|
+  LOOKAHEAD(2)
+  < LBRACKET > exp = Exp() < RBRACKET > < ASSIGN > exp2 = Exp() < SEMICOLON > { return new ArrayAssign(i, exp, exp2 ); }
+}
+
+/* A função FormalList() analisa as vaviaveis de certo tipo que faz parte
+do parametro de uma função*/
+FormalList FormalList() :
+{
+  Type t; Formal f; Token i;
+  FormalList fl = new FormalList();
+}
+{
+(t = Type() i = < ID > { fl.addElement(new Formal(t,new Identifier(i.image))); }( f = FormalRest() { fl.addElement(f); } )*)?
+{ return fl; }
+}
+
+
+/*Nessa função é analisado operações entre tokens com operadores
+"PLUS, MINUS, MULTIPLY, LT" e funcionamento token "DOT" e tratamento
+ da recursividade a esquerda*/
+Exp ExpL(Exp expL) :
+{
+  Exp exp1, exp2, exp3; ExpList el = new ExpList(); Token t;
+}
+{
+(LOOKAHEAD (2) (
+  < PLUS > exp1 = Exp() exp2 = ExpL(new Plus(expL,exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new Plus(expL,exp1); }
+  }
+| < MINUS > exp1 = Exp() exp2 = ExpL(new Minus(expL, exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new Minus(expL,exp1); }
+  }
+| < MULTIPLY > exp1 = Exp() exp2 = ExpL(new Times(expL, exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new Times(expL,exp1); }
+  }
+| < LT > exp1 = Exp() exp2 = ExpL(new LessThan(expL, exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new LessThan(expL,exp1); }
+  }
+| < AND > exp1 = Exp() exp2 = ExpL(new And(expL, exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new And(expL,exp1); }
+  }
+| < LBRACKET > exp1 = Exp() < RBRACKET > exp2 = ExpL(new ArrayLookup(expL,exp1))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new ArrayLookup(expL,exp1); }
+  }
+| LOOKAHEAD(2) < DOT > < LENGTH > exp2 = ExpL(new ArrayLength(expL))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new ArrayLength(expL); }
+  }
+| LOOKAHEAD(2) < DOT > t = < ID > < LPAREN > ( exp1 = Exp() { el.addElement(exp1); }
+( < COMMA > exp2 = Exp() { el.addElement(exp2); }  )* )? < RPAREN > exp3 = ExpL(new Call(expL, new Identifier(t.image), el))
+  {
+    if (exp3 != null) { return exp3; }
+    else { return new Call(expL, new Identifier(t.image), el); }
+  }
+
+))?
+{ return null; }
+}
+
+/*Nessa função é analisado o funcionamento de tokens do tipo "INTEGER_LITERAL,
+beleano TRUE e FALSE" e de alguns tokens como "ID, NOT, THIS, NEW" com expressões
+e tratamento da recursividade a esquerda*/
+Exp Exp() :
+{
+  Token t; Exp exp, exp2;
+}
+{
+  t = < INTEGER_LITERAL > (exp = ExpL(new IntegerLiteral(Integer.parseInt(t.image))))
+  {
+    if(exp != null)
+    { return exp; }  
+    else
+    { return new IntegerLiteral(Integer.parseInt(t.image)); }
+  }
+| < TRUE > (exp = ExpL(new True()))
+  {
+    if(exp != null) { return exp; }
+    else { return new True(); }
+  }
+| < FALSE > (exp =  ExpL(new False()))
+  {
+    if(exp != null) { return exp; }
+    else { return new False(); }
+  }
+| t = < ID > (exp = ExpL(new IdentifierExp(t.image)))
+  {
+    if(exp != null) { return exp; }
+    else { return new IdentifierExp(t.image); }
+  }
+| < THIS > (exp =  ExpL(new This()))
+  {
+    if(exp != null) { return exp; }
+    else { return new This(); }
+  }
+| LOOKAHEAD(2)
+  < NEW > < INT > < LBRACKET > (exp =  Exp()) < RBRACKET > exp2 =  ExpL(new NewArray(exp))
+  {
+    if(exp2 != null) { return exp2; }
+    else { return new NewArray(exp); }
+  }
+| LOOKAHEAD(2)
+  < NEW > t = < ID > < LPAREN > < RPAREN > (exp = ExpL(new NewObject(new Identifier(t.image))))
+  {
+    if (exp != null) { return exp; }
+    else { return new NewObject(new Identifier(t.image)); }
+  }
+| < NOT > exp = Exp() exp2 = ExpL(new Not(exp))
+  {
+    if (exp2 != null) { return exp2; }
+    else { return new Not(exp); }
+  }
+| < LPAREN > exp = Exp() < RPAREN > (exp2 = ExpL(exp))
+  {
+	if (exp2 != null) { return exp2; }
+      else { return exp; }
+  }
+}
