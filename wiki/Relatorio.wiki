@@ -99,7 +99,7 @@ Checagem de Tipos
 
 O padrão Visitor é um padrão de projeto no contexto de orientação a objeto e engenharia de software. O esse padrão nos  permite criar uma nova operação sem que se mude a classe dos elementos sobre as quais ela opera. A ideia é separar o algoritmo da estrutura do objeto. Com isso, ganhamos praticidade sobretudo na possibilidade de se adicionar novas funcionalidades a estruturas de um objeto pré-existente sem a necessidade de modificá-las. Esse padrão foi ultilizado no projeto com auxílio do material encontrado no seguinte endereço: http://www.cambridge.org/resources/052182060X/ .
 
-Na classe SymbolTableVisitor que implementa a classe TypeVisitor, onde aquela tem como objetivo fazer o analise de cada uma das classes da árvore sintática. Foi acrescentada também a classe ErrorMsg. Nessa classe teremos um booleano que indica se houve algum erro na checagem de tipos. A etapa onde é feita a checagem de tipos ultiliza bastante a classe TableOfSymbol, pois esta armazena estruturadamente as declarações de variáveis e o escopo das mesmas. 
+Na classe SymbolTableVisitor que implementa a classe TypeVisitor, onde aquela tem como objetivo fazer o analise de cada uma das classes da árvore sintática. Foi acrescentada também a classe ErrorMsg. Nessa classe teremos um booleano que indica se houve algum erro na checagem de tipos. A etapa onde é feita a checagem de tipos utiliza bastante a classe TableOfSymbol, pois esta armazena estruturadamente as declarações de variáveis e o escopo das mesmas. 
 
 ==Testes==
 
@@ -107,4 +107,4 @@ No pacote tests temos a classe Test onde é realizada as operações implementad
 
 ==Conclusão & Considerações==
 
-A equipe formada por apenas dois membros encontrou uma serie de dificuldades com a tecnologia utilizada bem como a complexidade do projeto. Porém, a equipe pode absorver a fundamentação teorica durante a disciplina e isso ajudou a iniciar e continuar o desenvolvimento do projeto. Pudemos nesse projeto, usar conhecimentos adquiridos em outras disciplinas como engenharia de software, porém não pudemos fazer uso de ferramentas devido as limitações de tempo e de pessoal. 
+A equipe formada por apenas dois membros encontrou uma serie de dificuldades com a tecnologia utilizada bem como a complexidade do projeto. Porém, a equipe pode absorver a fundamentação teórica durante a disciplina e isso ajudou a iniciar e continuar o desenvolvimento do projeto. Pudemos nesse projeto, usar conhecimentos adquiridos em outras disciplinas como engenharia de software, porém não pudemos fazer uso de ferramentas devido as limitações de tempo e de pessoal. 
